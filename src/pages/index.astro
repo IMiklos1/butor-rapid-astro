@@ -1,0 +1,76 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import Stats from "../components/Stats.astro";
+import Services from "../components/Services.astro";
+import Gallery from "../components/Gallery.astro";
+import Testimonials from "../components/Testimonials.astro";
+import Contact from "../components/Contact.astro";
+import Footer from "../components/Footer.astro";
+
+import { sanityClient } from "sanity:client";
+
+// Centralized data fetching — one request per document type
+const [settings, heroData, navData, stats, services, galleryData, testimonials, contactData] = await Promise.all([
+	sanityClient.fetch(`*[_type == "siteSettings"][0]`),
+	sanityClient.fetch(`*[_type == "hero"][0]`),
+	sanityClient.fetch(`*[_type == "navigation"][0]`),
+	sanityClient.fetch(`*[_type == "stat"] | order(order asc)`),
+	sanityClient.fetch(`*[_type == "service"] | order(order asc)`),
+	sanityClient.fetch(`*[_type == "gallery"][0]`),
+	sanityClient.fetch(`*[_type == "testimonial"] | order(order asc)`),
+	sanityClient.fetch(`*[_type == "contact"][0]`),
+]);
+
+const phoneNumber = heroData?.phoneNumber || "+36 30 814 0458";
+
+// Ha a CMS-ben beállítottad a sorrendet, azt használjuk.
+const sections = settings?.pageBuilder || [
+	"hero",
+	"stats",
+	"services",
+	"gallery",
+	"testimonials",
+	"contact",
+];
+
+// JSON-LD structured data for LocalBusiness
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@type": "LocalBusiness",
+	"name": "Bútor Rapid",
+	"description": "Bútor összeszerelés Miskolcon és környékén. Gyors, precíz, megbízható munka 10+ év tapasztalattal.",
+	"telephone": contactData?.phone || "+36 30 814 0458",
+	"email": contactData?.email || "butorrapid@gmail.com",
+	"address": {
+		"@type": "PostalAddress",
+		"addressLocality": "Miskolc",
+		"addressRegion": "Borsod-Abaúj-Zemplén",
+		"addressCountry": "HU"
+	},
+	"url": "https://butorrapid.hu",
+	"sameAs": [
+		contactData?.facebookUrl || "https://www.facebook.com/butorosszeszerelesmiskolc",
+		contactData?.instagramUrl || "https://www.instagram.com/butorosszeszerelesmiskolc"
+	]
+};
+---
+
+<Layout title="Bútor Rapid - Összeszerelés" jsonLd={jsonLd}>
+	<Header navData={navData} phoneNumber={phoneNumber} />
+	<main>
+		{
+			sections.map((section: string) => {
+				if (section === "hero") return <Hero heroData={heroData} />;
+				if (section === "stats") return <Stats stats={stats} />;
+				if (section === "services") return <Services services={services} phoneNumber={phoneNumber} />;
+				if (section === "gallery") return <Gallery galleryData={galleryData} />;
+				if (section === "testimonials") return <Testimonials testimonials={testimonials} />;
+				if (section === "contact") return <Contact contactData={contactData} />;
+				return null;
+			})
+		}
+		<Footer contactData={contactData} />
+	</main>
+</Layout>

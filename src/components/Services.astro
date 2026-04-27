@@ -1,0 +1,56 @@
+---
+// src/components/Services.astro
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  services: any[];
+  phoneNumber: string;
+}
+
+const { services, phoneNumber } = Astro.props;
+---
+
+<section id="services" class="py-24 bg-[#F5F0E8]">
+  <div class="container mx-auto px-6">
+    
+    {/* Szekció fejléc */}
+    <div class="mb-16 fade-up">
+      <div class="text-sm font-semibold uppercase tracking-widest mb-3 text-[#D4820A] font-source">
+        Szolgáltatásaink
+      </div>
+      <h2 class="text-4xl md:text-5xl font-bold font-playfair text-[#3D2B1F]">
+        Minden bútor, <span class="italic text-amber">minden helyiség</span>
+      </h2>
+    </div>
+
+    {/* Szolgáltatás kártyák rácsa */}
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {services.map((service: any, i: number) => (
+        <div 
+          class={`fade-up p-6 rounded-xl bg-white border border-[#3D2B1F]/10 shadow-sm hover:shadow-md transition-shadow duration-300`}
+          style={`transition-delay: ${i * 100}ms`}
+        >
+          <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-[#F5F0E8] text-[#D4820A] mb-4">
+            <Icon name={`lucide:${service.iconName || 'wrench'}`} class="w-6 h-6" />
+          </div>
+          <h3 class="font-bold text-lg mb-2 font-playfair text-[#3D2B1F]">{service.title}</h3>
+          <p class="text-sm leading-relaxed text-[#3D2B1F]/70">{service.description}</p>
+        </div>
+      ))}
+    </div>
+
+    {/* "Nem találja?" CTA kártya */}
+    <div class="mt-12 p-8 rounded-2xl relative overflow-hidden text-[#F5F0E8] fade-up bg-walnut-900/95 backdrop-blur-md">
+      <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+            <h3 class="text-2xl font-bold mb-2 font-playfair">Nem találja a keresett szolgáltatást?</h3>
+            <p class="opacity-80">Hívjon fel és megbeszéljük — szinte minden bútorral foglalkozunk!</p>
+        </div>
+        <a href={`tel:${phoneNumber}`} class="text-[#3D2B1F] flex items-center justify-center gap-2 px-6 py-3.5 rounded font-bold hover:scale-105 transition-all whitespace-nowrap bg-gold">
+            <Icon name="lucide:phone" class="w-3.5 h-3.5" />
+          {phoneNumber}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

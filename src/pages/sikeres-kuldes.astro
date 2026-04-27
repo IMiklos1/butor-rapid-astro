@@ -1,0 +1,76 @@
+---
+// src/pages/sikeres-kuldes.astro
+import Layout from '../layouts/Layout.astro';
+import { sanityClient } from "sanity:client";
+import { Icon } from "astro-icon/components";
+
+// Kérjük le a telefonszámot a Sanity-ből a Hívás gombhoz
+const contactData = await sanityClient.fetch(`*[_type == "contact"][0]`);
+const phone = contactData?.phone || "+36 30 814 0458";
+---
+
+<Layout title="Sikeres küldés | Bútor Rapid">
+  <main class="min-h-screen flex items-center justify-center p-6 bg-walnut-900">
+    
+    <div class="rounded-2xl p-8 md:p-12 w-full max-w-lg text-center shadow-2xl fade-up bg-cream-50 shadow-[0_20px_60px_oklch(0.10_0.03_42/0.4)]">
+      
+      <div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 bg-gold/15">
+        <Icon name="lucide:check-circle-2" class="w-10 h-10 text-amber" />
+      </div>
+
+      <h1 class="text-3xl md:text-4xl font-bold mb-4 font-playfair text-walnut-800">
+        Üzenet elküldve!
+      </h1>
+      
+      <p class="text-base mb-10 leading-relaxed text-earth-600">
+        Köszönjük megkeresését. Üzenetét sikeresen rögzítettük, és hamarosan felvesszük Önnel a kapcsolatot a megadott elérhetőségen.
+      </p>
+
+      <div class="flex flex-col gap-4">
+        
+        <a 
+          href="/" 
+          class="w-full flex items-center justify-center gap-2 py-4 rounded-lg font-semibold text-base transition-all duration-200 hover:scale-[1.02] bg-amber text-white font-sans shadow-[0_4px_16px_oklch(0.58_0.18_55/0.35)]"
+        >
+          <Icon name="lucide:arrow-left" class="w-5 h-5" />
+          Vissza a főoldalra
+        </a>
+
+        <a 
+          href={`tel:${phone.replace(/\s+/g, '')}`} 
+          class="w-full flex items-center justify-center gap-2 py-4 rounded-lg font-semibold text-base transition-all duration-200 hover:bg-black/5 border-2 border-gold text-walnut-800 font-sans"
+        >
+          <Icon name="lucide:phone" class="w-5 h-5 text-gold" />
+          Hívás most
+        </a>
+
+        <button 
+          id="close-window-btn" 
+          class="w-full py-2 mt-2 text-sm font-medium transition-colors hover:underline flex items-center justify-center gap-2 text-earth-600 font-sans"
+        >
+          <Icon name="lucide:x" class="w-4 h-4" />
+          Oldal bezárása
+        </button>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('.fade-up').forEach(el => el.classList.add('visible'));
+    }, 100);
+
+    const closeBtn = document.getElementById('close-window-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        window.close();
+        setTimeout(() => {
+          if (!window.closed) {
+            window.location.href = '/';
+          }
+        }, 300);
+      });
+    }
+  </script>
+</Layout>

@@ -1,0 +1,69 @@
+---
+// src/components/Footer.astro
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  contactData: any;
+}
+
+const { contactData } = Astro.props;
+const facebookUrl = contactData?.facebookUrl || "https://www.facebook.com/butorosszeszerelesmiskolc";
+const instagramUrl = contactData?.instagramUrl || "https://www.instagram.com/butorosszeszerelesmiskolc";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="py-10 bg-walnut-950 border-t border-gold/15">
+  <div class="container mx-auto px-6">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      
+      {/* ── Bal oldal: Logó és Név ── */}
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold bg-gold text-walnut-900 font-playfair">
+          BR
+        </div>
+        <div>
+          <div class="font-bold text-sm font-playfair text-sand-100">
+            Bútor Rapid
+          </div>
+          <div class="text-xs text-earth-400">
+            Bútor összeszerelés Miskolc
+          </div>
+        </div>
+      </div>
+
+      {/* ── Közép: Copyright & GDPR ── */}
+      <div class="flex flex-col items-center gap-2">
+        <div class="text-sm text-center text-earth-500">
+          © {year} Bútor Rapid — Miskolc. Minden jog fenntartva.
+        </div>
+        <a href="/adatvedelem" class="text-xs transition-colors hover:underline text-gold">
+          Adatkezelési tájékoztató
+        </a>
+      </div>
+
+      {/* ── Jobb oldal: Social linkek ── */}
+      <div class="flex items-center gap-4">
+        <a
+          href={facebookUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="w-8 h-8 rounded-lg flex items-center justify-center transition-transform duration-200 hover:scale-110"
+          style="background: #1877F2;"
+        >
+          <Icon name="lucide:facebook" class="w-4 h-4 text-white" />
+        </a>
+        <a
+          href={instagramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="w-8 h-8 rounded-lg flex items-center justify-center transition-transform duration-200 hover:scale-110"
+          style="background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);"
+        >
+          <Icon name="lucide:instagram" class="w-4 h-4 text-white" />
+        </a>
+      </div>
+
+    </div>
+  </div>
+</footer>

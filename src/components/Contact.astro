@@ -1,0 +1,294 @@
+---
+// src/components/Contact.astro
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  contactData: any;
+}
+
+const { contactData } = Astro.props;
+
+const {
+  title = "Kérjen ajánlatot most!",
+  subtitle = "Hívjon vagy írjon nekünk — gyorsan visszajelzünk...",
+  phone = "+36 30 814 0458",
+  email = "butorrapid@gmail.com",
+  location = "Miskolc, Borsod-Abaúj-Zemplén megye",
+  hours = "Minden nap — hétvégén is!",
+  facebookUrl = "https://www.facebook.com/butorosszeszerelesmiskolc",
+  instagramUrl = "https://www.instagram.com/butorosszeszerelesmiskolc"
+} = contactData || {};
+
+const contactItems = [
+  { icon: "lucide:phone", label: "Telefon", value: phone, href: `tel:${phone.replace(/\s+/g, '')}` },
+  { icon: "lucide:mail", label: "E-mail", value: email, href: `mailto:${email}` },
+  { icon: "lucide:map-pin", label: "Helyszín", value: location, href: null },
+  { icon: "lucide:clock", label: "Nyitvatartás", value: hours, href: null },
+];
+---
+
+<section id="contact" class="py-24 bg-walnut-800">
+  <div class="container mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-16 items-start">
+      
+      {/* ── BAL OLDAL (Kapcsolat infók) ── */}
+      <div class="fade-up">
+        <div class="text-sm font-semibold uppercase tracking-widest mb-3 text-gold font-sans">
+          Kapcsolat
+        </div>
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 font-playfair text-cream-50">
+          {title.split(' ').slice(0, -2).join(' ')} 
+          <span class="italic text-gold">{title.split(' ').slice(-2, -1)}</span> 
+          {title.split(' ').slice(-1)}
+        </h2>
+        <p class="text-lg mb-10 leading-relaxed text-sand-300">
+          {subtitle}
+        </p>
+
+        <div class="space-y-6">
+          {contactItems.map((item) => (
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-gold/15">
+                <Icon name={item.icon} class="w-[18px] h-[18px] text-gold" />
+              </div>
+              <div>
+                <div class="text-xs font-semibold uppercase tracking-wide mb-0.5 text-earth-300">
+                  {item.label}
+                </div>
+                {item.href ? (
+                  <a href={item.href} class="font-medium transition-colors duration-200 text-sand-100">
+                    {item.value}
+                  </a>
+                ) : (
+                  <span class="font-medium text-sand-100">
+                    {item.value}
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="flex gap-4 mt-10">
+          <a href={facebookUrl} target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg flex items-center justify-center transition-transform hover:scale-110" style="background: #1877F2">
+            <Icon name="lucide:facebook" class="w-[18px] h-[18px] text-white" />
+          </a>
+          <a href={instagramUrl} target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg flex items-center justify-center transition-transform hover:scale-110" style="background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)">
+            <Icon name="lucide:instagram" class="w-[18px] h-[18px] text-white" />
+          </a>
+        </div>
+      </div>
+
+      {/* ── JOBB OLDAL (Netlify Form) ── */}
+      <div class="fade-up" style="transition-delay: 200ms;">
+        <div class="rounded-2xl p-8 bg-cream-50 shadow-[0_20px_60px_oklch(0.10_0.03_42/0.4)]">
+          
+          <h3 class="text-2xl font-bold mb-6 font-playfair text-walnut-800">
+            Írjon nekünk
+          </h3>
+          
+          <form 
+            name="kapcsolat" 
+            method="POST" 
+            data-netlify="true"
+            data-netlify-honeypot="bot-field"
+            enctype="multipart/form-data"
+            class="space-y-5"
+            action="/sikeres-kuldes"
+          >
+            {/* Honeypot field for spam prevention */}
+            <p class="hidden">
+              <label>Ne töltse ki: <input name="bot-field" /></label>
+            </p>
+
+            <div>
+              <label class="block text-sm font-semibold mb-1.5 text-earth-700">Neve *</label>
+              <input type="text" name="name" required placeholder="Kovács János" class="form-input" />
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-sm font-semibold mb-1.5 text-earth-700">Telefonszám *</label>
+                
+                <div class="flex">
+                  <span class="inline-flex items-center px-3 rounded-l-lg border-y border-l text-sm font-semibold select-none border-cream-300 bg-cream-200 text-earth-700">
+                    +36
+                  </span>
+                  <input type="hidden" name="countryCode" value="+36" />
+                  <input type="tel" name="phone" required placeholder="30 123 4567" class="form-input rounded-l-none border-l-0" style="border-top-left-radius: 0; border-bottom-left-radius: 0;"/>
+                </div>
+
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-1.5 text-earth-700">E-mail</label>
+                <input type="email" name="email" placeholder="email@example.com" class="form-input" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-1.5 text-earth-700">Üzenet *</label>
+              <textarea name="message" required rows="4" placeholder="Milyen bútor összeszerelésre van szüksége?" class="form-input resize-none"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-1.5 text-earth-700">Bútor fényképei (opcionális)</label>
+              
+              <div id="drop-zone" class="relative border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all duration-200 border-cream-300 bg-cream-100">
+                <input type="file" id="file-upload" name="images" accept="image/*" multiple class="hidden" />
+                
+                <div id="upload-prompt" class="py-2 pointer-events-none">
+                  <Icon name="lucide:upload" class="mx-auto mb-2 w-6 h-6 text-gold" />
+                  <p class="text-sm font-medium text-earth-700">Kattintson vagy húzza ide a képeket</p>
+                  <p class="text-xs mt-1 text-earth-400">JPG, PNG, WebP</p>
+                </div>
+
+                <div id="preview-gallery" class="hidden grid grid-cols-3 gap-3 mt-2">
+                  </div>
+
+              </div>
+            </div>
+
+            {/* GDPR Pipa */}
+            <div class="flex items-start gap-3 mt-4 mb-2">
+              <input 
+                type="checkbox" 
+                id="gdpr" 
+                name="gdpr_elfogadva" 
+                required 
+                class="mt-1 w-4 h-4 cursor-pointer accent-gold"
+              />
+              <label for="gdpr" class="text-xs leading-relaxed cursor-pointer select-none text-earth-600">
+                Elolvastam és elfogadom az <a href="/adatvedelem" target="_blank" class="font-semibold underline transition-colors text-gold hover:text-amber">Adatkezelési tájékoztatóban</a> foglaltakat, és hozzájárulok a megadott adataim kezeléséhez. *
+              </label>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 mt-2 rounded-lg font-semibold text-base transition-all duration-200 hover:scale-[1.02] hover:shadow-lg bg-amber text-white font-sans shadow-[0_4px_16px_oklch(0.58_0.18_55/0.35)]">
+              Üzenet küldése
+            </button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.2s;
+    border: 1.5px solid var(--color-cream-300);
+    background: var(--color-cream-100);
+    color: var(--color-walnut-800);
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .form-input:focus {
+    border-color: var(--color-gold);
+  }
+</style>
+
+<script>
+  let uploadedFiles = new DataTransfer(); 
+  
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-upload') as HTMLInputElement;
+  const prompt = document.getElementById('upload-prompt');
+  const gallery = document.getElementById('preview-gallery');
+
+  const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`;
+
+  function updateGalleryUI() {
+    if (!gallery || !prompt || !fileInput) return;
+    
+    if (uploadedFiles.files.length > 0) {
+      prompt.classList.add('hidden');
+      gallery.classList.remove('hidden');
+
+      let newHTML = '';
+      
+      Array.from(uploadedFiles.files).forEach((file, index) => {
+        const objectUrl = URL.createObjectURL(file);
+        
+        newHTML += `
+          <div class="relative group cursor-default">
+            <img src="${objectUrl}" class="h-20 w-full object-cover rounded-md shadow-sm border border-black/10" />
+            <button type="button" class="delete-btn absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md z-10 bg-amber text-white" data-index="${index}">
+              ${closeIcon}
+            </button>
+          </div>
+        `;
+      });
+
+      gallery.innerHTML = newHTML;
+
+      gallery.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          
+          const index = parseInt((ev.currentTarget as HTMLElement).getAttribute('data-index') || '0');
+          removeFile(index);
+        });
+      });
+
+    } else {
+      gallery.innerHTML = '';
+      prompt.classList.remove('hidden');
+      gallery.classList.add('hidden');
+    }
+    
+    fileInput.files = uploadedFiles.files;
+  }
+
+  function addFiles(files: FileList | null) {
+    if (!files) return;
+    Array.from(files).forEach(file => {
+      if (file.type.startsWith('image/')) uploadedFiles.items.add(file);
+    });
+    updateGalleryUI();
+  }
+
+  function removeFile(indexToRemove: number) {
+    const dt = new DataTransfer();
+    Array.from(uploadedFiles.files).forEach((file, index) => {
+      if (index !== indexToRemove) dt.items.add(file);
+    });
+    uploadedFiles = dt;
+    updateGalleryUI();
+  }
+
+  dropZone?.addEventListener('click', (e) => {
+    const isButton = (e.target as Element).closest('button');
+    const isImage = (e.target as Element).closest('.group');
+    if (!isButton && !isImage) {
+      fileInput?.click();
+    }
+  });
+
+  fileInput?.addEventListener('change', (e) => {
+    addFiles((e.target as HTMLInputElement).files);
+  });
+
+  dropZone?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    (dropZone as HTMLElement).style.borderColor = "oklch(0.72 0.16 65)";
+    (dropZone as HTMLElement).style.background = "oklch(0.93 0.02 75)";
+  });
+
+  dropZone?.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    (dropZone as HTMLElement).style.borderColor = "oklch(0.87 0.025 70)";
+    (dropZone as HTMLElement).style.background = "oklch(0.97 0.015 80)";
+  });
+
+  dropZone?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    (dropZone as HTMLElement).style.borderColor = "oklch(0.87 0.025 70)";
+    (dropZone as HTMLElement).style.background = "oklch(0.97 0.015 80)";
+    addFiles(e.dataTransfer?.files || null);
+  });
+</script>

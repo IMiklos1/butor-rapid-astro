@@ -1,0 +1,157 @@
+---
+// src/components/Header.astro
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  navData: any;
+  phoneNumber: string;
+}
+
+const { navData, phoneNumber } = Astro.props;
+
+const navLinks = navData?.links || [
+  { label: "Rólunk", href: "#about" },
+  { label: "Szolgáltatások", href: "#services" },
+  { label: "Munkáink", href: "#gallery" },
+  { label: "Vélemények", href: "#testimonials" },
+  { label: "Kapcsolat", href: "#contact" },
+];
+---
+
+<nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-walnut-900/95 backdrop-blur-md border-b border-gold/20">
+  <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+    
+    {/* Bal oldal: Logó */}
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold bg-gold text-walnut-900 font-playfair">
+        BR
+      </div>
+      <div>
+        <div class="font-bold text-base leading-tight font-playfair text-cream-50">
+          Bútor Rapid
+        </div>
+        <div class="text-xs text-gold">
+          Miskolc
+        </div>
+      </div>
+    </div>
+
+    {/* Közép: Desktop Linkek */}
+    <div class="hidden md:flex items-center gap-8">
+      {navLinks.map((link: any) => (
+        <a 
+          href={link.href} 
+          class="desktop-link text-sm font-medium transition-colors duration-200 text-sand-100 font-sans"
+          data-target={link.href.replace('#', '')}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+
+    {/* Jobb oldal: CTA Gomb */}
+    <a
+      href={`tel:${phoneNumber.replace(/\s+/g, '')}`}
+      class="hidden md:flex items-center gap-2 px-4 py-2 rounded text-sm font-semibold transition-all duration-200 hover:scale-105 bg-gold text-walnut-900 font-sans"
+    >
+      <Icon name="lucide:phone" class="w-3.5 h-3.5" />
+      {phoneNumber}
+    </a>
+
+    {/* Mobil Hamburger Gomb */}
+    <button id="mobile-menu-btn" class="md:hidden p-2 text-cream-50" aria-label="Menü megnyitása">
+      <div class="w-5 h-0.5 mb-1 transition-transform duration-300 origin-center bg-current"></div>
+      <div class="w-5 h-0.5 mb-1 transition-opacity duration-300 bg-current"></div>
+      <div class="w-5 h-0.5 transition-transform duration-300 origin-center bg-current"></div>
+    </button>
+  </div>
+
+  {/* Mobil Menü Panel */}
+  <div id="mobile-menu-panel" class="hidden md:hidden px-4 pb-4 flex-col gap-3 bg-walnut-900">
+    {navLinks.map((link: any) => (
+      <a 
+        href={link.href} 
+        class="mobile-link text-left py-2 text-sm font-medium border-b transition-colors text-sand-100 border-gold/20 font-sans"
+        data-target={link.href.replace('#', '')}
+      >
+        {link.label}
+      </a>
+    ))}
+    <a
+      href={`tel:${phoneNumber.replace(/\s+/g, '')}`}
+      class="flex items-center justify-center gap-2 px-4 py-3 rounded text-sm font-semibold mt-2 bg-gold text-walnut-900"
+    >
+      <Icon name="lucide:phone" class="w-3.5 h-3.5" />
+      {phoneNumber}
+    </a>
+  </div>
+</nav>
+
+<style>
+  .desktop-link:hover, .desktop-link.active {
+    color: var(--color-gold) !important;
+  }
+  .desktop-link.active {
+    font-weight: 700 !important;
+  }
+
+  .mobile-link:hover, .mobile-link.active {
+    color: var(--color-gold) !important;
+  }
+  .mobile-link.active {
+    font-weight: 700 !important;
+    border-color: oklch(0.72 0.16 65 / 0.6) !important;
+  }
+
+  .menu-open div:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .menu-open div:nth-child(2) { opacity: 0; }
+  .menu-open div:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+</style>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const panel = document.getElementById('mobile-menu-panel');
+  const allLinks = document.querySelectorAll('.mobile-link, .desktop-link');
+
+  if (btn && panel) {
+    btn.addEventListener('click', () => {
+      panel.classList.toggle('hidden');
+      panel.classList.toggle('flex');
+      btn.classList.toggle('menu-open');
+    });
+
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => {
+        panel.classList.add('hidden');
+        panel.classList.remove('flex');
+        btn.classList.remove('menu-open');
+      });
+    });
+  }
+
+  const sections = document.querySelectorAll('section[id]');
+
+  const observerOptions = {
+    root: null,
+    rootMargin: '-20% 0px -80% 0px',
+    threshold: 0
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        allLinks.forEach(link => {
+          if (link.getAttribute('data-target') === id) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+    });
+  }, observerOptions);
+
+  sections.forEach(section => observer.observe(section));
+</script>
+</script>

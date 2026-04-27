@@ -1,0 +1,176 @@
+---
+// src/pages/adatvedelem.astro
+import Layout from "../layouts/Layout.astro";
+import Footer from "../components/Footer.astro";
+import { sanityClient } from "sanity:client";
+import { Icon } from "astro-icon/components";
+
+// Adatok lekérése a Sanity-ből
+const contactData = await sanityClient.fetch(`*[_type == "contact"][0]`);
+
+const {
+    legalName = "[Hivatalos név feltöltés alatt]",
+    address = "[Székhely feltöltés alatt]",
+    taxNumber = "[Adószám feltöltés alatt]",
+    phone = "+36 30 814 0458",
+    email = "butorrapid@gmail.com",
+    gdprDate = "2024.01.01",
+} = contactData || {};
+
+// Dátum formázása szebbé (pl. 2024-05-10 -> 2024. május 10.)
+const formattedDate = new Date(gdprDate).toLocaleDateString("hu-HU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+});
+---
+
+<Layout title="Adatkezelési Tájékoztató | Bútor Rapid">
+    <main class="pt-12 pb-24 min-h-screen bg-cream-100">
+        <div class="container mx-auto px-6 max-w-3xl">
+            {/* Vissza gomb a Header helyett */}
+            <div class="mb-12 fade-up">
+                <a
+                    href="/"
+                    class="inline-flex items-center gap-2 text-sm font-semibold transition-colors hover:opacity-70 text-walnut-800"
+                >
+                    <Icon name="lucide:arrow-left" class="w-4 h-4" />
+                    Vissza a főoldalra
+                </a>
+            </div>
+
+            <div class="mb-10 fade-up">
+                <h1
+                    class="text-4xl md:text-5xl font-bold mb-4 font-playfair text-walnut-800"
+                >
+                    Adatkezelési tájékoztató
+                </h1>
+                <p
+                    class="text-sm font-semibold tracking-widest uppercase text-gold font-sans"
+                >
+                    Hatályos: {formattedDate}-től
+                </p>
+            </div>
+
+            <div
+                class="space-y-8 fade-up text-base leading-relaxed text-earth-700 font-sans"
+            >
+                <section>
+                    <h2
+                        class="text-2xl font-bold mb-3 font-playfair text-walnut-800"
+                    >
+                        1. Az Adatkezelő adatai
+                    </h2>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li><strong>Név / Cégnév:</strong> {legalName}</li>
+                        <li><strong>Székhely:</strong> {address}</li>
+                        <li><strong>Adószám:</strong> {taxNumber}</li>
+                        <li><strong>E-mail cím:</strong> {email}</li>
+                        <li><strong>Telefonszám:</strong> {phone}</li>
+                    </ul>
+                </section>
+
+                <hr class="border-t border-[#3D2B1F]/10" />
+
+                <section>
+                    <h2
+                        class="text-2xl font-bold mb-3 font-playfair text-walnut-800"
+                    >
+                        2. A kezelt adatok köre és a célja
+                    </h2>
+                    <p class="mb-2">
+                        A weboldalon található kapcsolatfelvételi űrlap (Netlify
+                        Forms) használata során az alábbi személyes adatokat
+                        kérjük be:
+                    </p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>
+                            <strong>Név:</strong> Azonosításhoz és kapcsolattartáshoz.
+                        </li>
+                        <li>
+                            <strong>Telefonszám:</strong> Visszahívás és egyeztetés
+                            céljából.
+                        </li>
+                        <li>
+                            <strong>E-mail cím:</strong> Árajánlat megküldéséhez.
+                        </li>
+                        <li><strong>Képek:</strong> A munka felméréséhez.</li>
+                    </ul>
+                </section>
+
+                <hr class="border-t border-[#3D2B1F]/10" />
+
+                <section>
+                    <h2
+                        class="text-2xl font-bold mb-3"
+                        style="font-family: 'Playfair Display', serif; color: oklch(0.20 0.04 42);"
+                    >
+                        3. Az adatkezelés jogalapja és időtartama
+                    </h2>
+
+                    <p>
+                        <strong>Jogalap:</strong> Az Ön önkéntes hozzájárulása (GDPR
+                        6. cikk (1) bek. a) pont), amelyet az űrlap elküldése előtti
+                        jelölőnégyzet (checkbox) bepipálásával ad meg.
+                    </p>
+
+                    <p>
+                        <strong>Időtartam:</strong> Az adatokat a kapcsolatfelvétel
+                        lezárásáig, vagy ha megbízás történik, akkor a számviteli
+                        törvények által előírt ideig (általában számlázás után 8 évig)
+                        őrizzük meg. Sikertelen ajánlattétel esetén az elküldött fotókat
+                        és adatokat haladéktalanul, de legkésőbb 30 napon belül töröljük.
+                    </p>
+                </section>
+
+                <hr class="border-t border-[#3D2B1F]/10" />
+
+                <section>
+                    <h2
+                        class="text-2xl font-bold mb-3"
+                        style="font-family: 'Playfair Display', serif; color: oklch(0.20 0.04 42);"
+                    >
+                        4. Adattovábbítás és adatfeldolgozók
+                    </h2>
+
+                    <p class="mb-2">
+                        Adatait harmadik félnek nem adjuk el, és nem használjuk
+                        fel marketing (hírlevél) célokra kifejezett hozzájárulás
+                        nélkül. A weboldal működtetéséhez az alábbi
+                        adatfeldolgozót vesszük igénybe:
+                    </p>
+
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>
+                            <strong>Netlify, Inc.</strong> (Űrlapok feldolgozása és
+                            tárhelyszolgáltatás) - a megadott adatok biztonságos szervereken
+                            kerülnek tárolásra.
+                        </li>
+                    </ul>
+                </section>
+
+                <hr class="border-t border-[#3D2B1F]/10" />
+
+                <section>
+                    <h2
+                        class="text-2xl font-bold mb-3"
+                        style="font-family: 'Playfair Display', serif; color: oklch(0.20 0.04 42);"
+                    >
+                        5. Az Ön jogai
+                    </h2>
+
+                    <p>
+                        Ön bármikor jogosult tájékoztatást kérni a kezelt
+                        adatairól, kérheti azok helyesbítését, törlését (az
+                        "elfeledtetéshez való jog"), vagy visszavonhatja az
+                        adatkezeléshez adott hozzájárulását a fent megadott
+                        e-mail címen. Panasz esetén a Nemzeti Adatvédelmi és
+                        Információszabadság Hatósághoz (NAIH) fordulhat.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <Footer contactData={contactData} />
+</Layout>

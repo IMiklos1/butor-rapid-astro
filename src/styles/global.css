@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand accents */
+  --color-gold: oklch(0.72 0.16 65);
+  --color-amber: oklch(0.58 0.18 55);
+
+  /* Dark scale (walnut/brown backgrounds) */
+  --color-walnut-950: oklch(0.14 0.03 42);
+  --color-walnut-900: oklch(0.18 0.04 42);
+  --color-walnut-800: oklch(0.20 0.04 42);
+  --color-walnut-700: oklch(0.28 0.05 42);
+
+  /* Light scale (warm creams) */
+  --color-cream-50: oklch(0.99 0.005 80);
+  --color-cream-100: oklch(0.97 0.015 80);
+  --color-cream-200: oklch(0.93 0.02 75);
+  --color-cream-300: oklch(0.87 0.025 70);
+
+  /* Text on dark backgrounds */
+  --color-sand-100: oklch(0.87 0.015 75);
+  --color-sand-200: oklch(0.80 0.015 75);
+  --color-sand-300: oklch(0.75 0.015 75);
+
+  /* Text on light backgrounds */
+  --color-earth-300: oklch(0.60 0.04 55);
+  --color-earth-400: oklch(0.55 0.04 55);
+  --color-earth-500: oklch(0.50 0.04 55);
+  --color-earth-600: oklch(0.45 0.04 55);
+  --color-earth-700: oklch(0.35 0.04 50);
+}

@@ -1,0 +1,33 @@
+---
+// src/components/Stats.astro
+interface Props {
+  stats: any[];
+}
+
+const { stats } = Astro.props;
+---
+
+<div class="bg-[#D4820A]">
+  <div class="container mx-auto px-6 py-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      
+      {stats.map((stat: any) => (
+        <div>
+          <div class="text-3xl font-bold font-playfair text-[#3D2B1F]">
+            {stat.value}
+          </div>
+          <div class="text-sm font-medium mt-1 text-[#3D2B1F]/80">
+            {stat.label}
+          </div>
+        </div>
+      ))}
+
+      {stats.length === 0 && (
+        <p class="col-span-full text-[#3D2B1F]/60 text-sm">
+          A statisztikák feltöltése folyamatban...
+        </p>
+      )}
+
+    </div>
+  </div>
+</div>
