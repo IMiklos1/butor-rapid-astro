@@ -88,18 +88,25 @@ const contactItems = [
           </h3>
           
           <form 
+            id="contact-form"
             name="kapcsolat" 
             method="POST" 
             data-netlify="true"
             data-netlify-honeypot="bot-field"
             enctype="multipart/form-data"
             class="space-y-5"
-            action="/sikeres-kuldes/"
           >
-            {/* Honeypot field for spam prevention */}
+            {/* Netlify Spam védelem */}
             <p class="hidden">
               <label>Ne töltse ki: <input name="bot-field" /></label>
             </p>
+            <input type="hidden" name="form-name" value="kapcsolat" />
+
+            {/* Árnyékmezők a képeknek (Fájl típusúnak kell lenniük a Netlify miatt!) */}
+            <input type="file" name="image_0" class="hidden" />
+            <input type="file" name="image_1" class="hidden" />
+            <input type="file" name="image_2" class="hidden" />
+            <input type="file" name="image_3" class="hidden" />
 
             <div>
               <label class="block text-sm font-semibold mb-1.5 text-earth-700">Neve *</label>
@@ -109,7 +116,6 @@ const contactItems = [
             <div class="grid sm:grid-cols-2 gap-5">
               <div>
                 <label class="block text-sm font-semibold mb-1.5 text-earth-700">Telefonszám *</label>
-                
                 <div class="flex">
                   <span class="inline-flex items-center px-3 rounded-l-lg border-y border-l text-sm font-semibold select-none border-cream-300 bg-cream-200 text-earth-700">
                     +36
@@ -117,7 +123,6 @@ const contactItems = [
                   <input type="hidden" name="countryCode" value="+36" />
                   <input type="tel" name="phone" required placeholder="30 123 4567" class="form-input rounded-l-none border-l-0" style="border-top-left-radius: 0; border-bottom-left-radius: 0;"/>
                 </div>
-
               </div>
               <div>
                 <label class="block text-sm font-semibold mb-1.5 text-earth-700">E-mail</label>
@@ -132,14 +137,15 @@ const contactItems = [
 
             <div>
               <label class="block text-sm font-semibold mb-1.5 text-earth-700">Bútor fényképei (opcionális)</label>
-              
-              <div id="drop-zone" class="relative border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all duration-200 border-cream-300 bg-cream-100">
+              <div id="drop-zone" class="relative border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all duration-200 border-cream-300 bg-cream-100 hover:border-gold hover:bg-cream-200">
+                
+                {/* A látható fájlválasztó */}
                 <input type="file" id="file-upload" name="images" accept="image/*" multiple class="hidden" />
                 
                 <div id="upload-prompt" class="py-2 pointer-events-none">
                   <Icon name="lucide:upload" class="mx-auto mb-2 w-6 h-6 text-gold" />
                   <p class="text-sm font-medium text-earth-700">Kattintson vagy húzza ide a képeket</p>
-                  <p class="text-xs mt-1 text-earth-400">JPG, PNG, WebP</p>
+                  <p class="text-xs mt-1 text-earth-400">Maximum 4 kép (Összesen max. 8MB)</p>
                 </div>
 
                 <div id="preview-gallery" class="hidden grid grid-cols-3 gap-3 mt-2">
@@ -194,6 +200,7 @@ const contactItems = [
 <script>
   let uploadedFiles = new DataTransfer(); 
   
+  const form = document.getElementById('contact-form') as HTMLFormElement;
   const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('file-upload') as HTMLInputElement;
   const prompt = document.getElementById('upload-prompt');
@@ -201,6 +208,7 @@ const contactItems = [
 
   const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`;
 
+  // ── UI és Galéria logika ──
   function updateGalleryUI() {
     if (!gallery || !prompt || !fileInput) return;
     
@@ -229,7 +237,6 @@ const contactItems = [
         btn.addEventListener('click', (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
-          
           const index = parseInt((ev.currentTarget as HTMLElement).getAttribute('data-index') || '0');
           removeFile(index);
         });
@@ -246,7 +253,8 @@ const contactItems = [
 
   function addFiles(files: FileList | null) {
     if (!files) return;
-    Array.from(files).forEach(file => {
+    // Maximum 4 fájlt engedünk a Netlify korlátai miatt
+    Array.from(files).slice(0, 4 - uploadedFiles.files.length).forEach(file => {
       if (file.type.startsWith('image/')) uploadedFiles.items.add(file);
     });
     updateGalleryUI();
@@ -261,6 +269,7 @@ const contactItems = [
     updateGalleryUI();
   }
 
+  // Eseménykezelők a fájlfeltöltéshez
   dropZone?.addEventListener('click', (e) => {
     const isButton = (e.target as Element).closest('button');
     const isImage = (e.target as Element).closest('.group');
@@ -273,22 +282,51 @@ const contactItems = [
     addFiles((e.target as HTMLInputElement).files);
   });
 
-  dropZone?.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    (dropZone as HTMLElement).style.borderColor = "oklch(0.72 0.16 65)";
-    (dropZone as HTMLElement).style.background = "oklch(0.93 0.02 75)";
-  });
-
-  dropZone?.addEventListener('dragleave', (e) => {
-    e.preventDefault();
-    (dropZone as HTMLElement).style.borderColor = "oklch(0.87 0.025 70)";
-    (dropZone as HTMLElement).style.background = "oklch(0.97 0.015 80)";
-  });
-
+  dropZone?.addEventListener('dragover', (e) => e.preventDefault());
   dropZone?.addEventListener('drop', (e) => {
     e.preventDefault();
-    (dropZone as HTMLElement).style.borderColor = "oklch(0.87 0.025 70)";
-    (dropZone as HTMLElement).style.background = "oklch(0.97 0.015 80)";
     addFiles(e.dataTransfer?.files || null);
+  });
+
+  // ── Űrlap beküldése AJAX-szal (Netlify kompatibilitás miatt) ──
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    
+    // Töröljük a gyűjtőmezőt, nehogy az zavarja össze a Netlify-t
+    formData.delete('images');
+
+    // Csatoljuk a fájlokat a megfelelő árnyékmezőkhöz
+    Array.from(uploadedFiles.files).slice(0, 4).forEach((file, index) => {
+      formData.set(`image_${index}`, file);
+    });
+
+    const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.innerHTML = 'Küldés folyamatban...';
+    }
+
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        window.location.href = "/sikeres-kuldes/";
+      } else {
+        alert("Hiba történt a küldés során. Kérjük, próbálja újra később.");
+      }
+    } catch (error) {
+      console.error("Form error:", error);
+      alert("Hálózati hiba történt. Kérjük, ellenőrizze az internetkapcsolatát.");
+    } finally {
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Üzenet küldése';
+        }
+    }
   });
 </script>
